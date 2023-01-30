@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jenkins
+        version: v1
+    spec:
+       serviceAccountName: default
+       containers:
+       - name: jenkins
+         image: joedayz/jenkins:lts-k8s
+         imagePullPolicy: Never
+         env:
+           - name: JAVA_OPTS
+             value: -Djenkins.install.runSetupWizard=false
+           - name: JENKINS_MASTER_POD_IP
+             valueFrom:
+               fieldRef:
+                 fieldPath: status.podIP
+           - name: JENKINS_OPTS
+             value: --httpPort=80
+         ports:
+         - name: http-port
+           containerPort: 80
+         volumeMounts:
+         - name: jenkins-home
+           mountPath: /var/jenkins_home
+         - name: docker-sock
+           mountPath: /var/run/docker.sock
+       volumes:
+       - name: docker-sock
+         hostPath:
+           path: /var/run/docker.sock
+       - name: jenkins-home
+         emptyDir: {}
