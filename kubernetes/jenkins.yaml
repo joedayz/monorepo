@@ -18,7 +18,7 @@ spec:
        serviceAccountName: default
        containers:
        - name: jenkins
-         image: joedayz/jenkins:lts-k8s
+         image: jenkinsme
          imagePullPolicy: Never
          env:
            - name: JAVA_OPTS
