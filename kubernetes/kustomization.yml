@@ -1,0 +1,4 @@
+resources:
+- jenkins.yml
+- helloworld.yml
+- rbac.yml
